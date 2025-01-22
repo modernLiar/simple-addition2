@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'python -m unittest discover'
+                sh 'python3 -m unittest discover'
             }
         }
         stage('Build Docker Image') {
