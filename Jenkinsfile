@@ -22,7 +22,7 @@ pipeline {
                 DOCKER_PASSWORD = credentials('docker-password')
             }
             steps {
-                sh """
+                sh '''
                 echo "DOCKER_USERNAME: $DOCKER_USERNAME"
                 echo "Logging in to Docker Hub..."
                 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
@@ -30,7 +30,7 @@ pipeline {
                 docker tag addition-app $DOCKER_USERNAME/addition-app:latest
                 echo "Pushing the Docker image to Docker Hub..."
                 docker push $DOCKER_USERNAME/addition-app:latest
-                """
+                '''
             }
         }
     }
