@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_USERNAME = credentials('docker-username')
+        DOCKER_PASSWORD = credentials('docker-password')
+    }
     stages {
         stage('Clone Repository') {
             steps {
@@ -11,21 +15,22 @@ pipeline {
                 sh 'python3 -m unittest discover'
             }
         }
+        stage('Login to Docker Hub') {
+            steps {
+                sh '''
+                echo "Logging in to Docker Hub..."
+                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                '''
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t addition-app .'
             }
         }
         stage('Push to Docker Hub') {
-            environment {
-                DOCKER_USERNAME = credentials('docker-username')
-                DOCKER_PASSWORD = credentials('docker-password')
-            }
             steps {
                 sh '''
-                echo "DOCKER_USERNAME: $DOCKER_USERNAME"
-                echo "Logging in to Docker Hub..."
-                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                 echo "Tagging the Docker image..."
                 docker tag addition-app $DOCKER_USERNAME/addition-app:latest
                 echo "Pushing the Docker image to Docker Hub..."
@@ -35,3 +40,4 @@ pipeline {
         }
     }
 }
+    
