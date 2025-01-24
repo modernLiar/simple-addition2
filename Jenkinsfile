@@ -3,6 +3,7 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('docker-username')
         DOCKER_PASSWORD = credentials('docker-password')
+        EMAIL_RECIPIENT = credentials('outlook-email')
     }
     stages {
         stage('Clone Repository') {
@@ -39,5 +40,27 @@ pipeline {
             }
         }
     }
+    post {
+        failure {
+            script {
+                // Get the name of the failed stage
+                def failedStage = currentBuild.result == 'FAILURE' ? currentBuild.stageName : 'Unknown Stage'
+                
+                // Send an email with the failed stage information
+                emailext (
+                    subject: "Pipeline Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: """
+                    The pipeline has failed at stage: ${failedStage}.
+
+                    Job: ${env.JOB_NAME}
+                    Build Number: ${env.BUILD_NUMBER}
+                    Build URL: ${env.BUILD_URL}
+                    """,
+                    to: "${env.EMAIL_RECIPIENT}"
+                )
+            }
+        }
+    }
 }
+
     
