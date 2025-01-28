@@ -3,7 +3,6 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('docker-username')
         DOCKER_PASSWORD = credentials('docker-password')
-        EMAIL_RECIPIENT = credentials('outlook-email')
     }
     stages {
         stage('Clone Repository') {
@@ -41,26 +40,39 @@ pipeline {
         }
     }
     post {
-        failure {
-            script {
-                // Get the name of the failed stage
-                def failedStage = currentBuild.result == 'FAILURE' ? currentBuild.stageName : 'Unknown Stage'
-                
-                // Send an email with the failed stage information
-                emailext (
-                    subject: "Pipeline Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: """
-                    The pipeline has failed at stage: ${failedStage}.
+    always {
+        script {
+            def jobName = env.JOB_NAME
+            def buildNumber = env.BUILD_NUMBER
+            def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
+            def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
 
-                    Job: ${env.JOB_NAME}
-                    Build Number: ${env.BUILD_NUMBER}
-                    Build URL: ${env.BUILD_URL}
-                    """,
-                    to: "${env.EMAIL_RECIPIENT}"
-                )
+            def body = """<html>
+                <body>
+                    <div style="border: 4px solid ${bannerColor}; padding: 10px;">
+                        <h2>${jobName} - Build ${buildNumber}</h2>
+                        <div style="background-color: ${bannerColor}; padding: 10px;">
+                            <h3 style="color: white;">Pipeline Status: 
+                                ${pipelineStatus.toUpperCase()}</h3>
+                        </div>
+                        <p>Check the <a href="${BUILD_URL}">console output</a>.</p>
+                    </div>
+                </body>
+            </html>"""
+
+            emailext (
+                subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus}",
+                body: body,
+                to: 'flxschmidt969@gmail.com',
+                from: 'jenkins@example.com',
+                replyTo: 'jenkins@example.com',
+                mimeType: 'text/html',
+                // attachmentsPattern: 'a.txt' # Uncomment this line if you have a file you want to attach
+               )
             }
         }
     }
+
 }
 
     
