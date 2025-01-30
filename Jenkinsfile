@@ -40,14 +40,29 @@ pipeline {
         }
     }
     post {
-        always {
+        success {
             emailext (
-                subject: "Test Email from Jenkins",
-                body: "This is a test email.",
-                to: 'flxschmidt969@gmail.com'
+                subject: "${JOB_NAME} - Build #${BUILD_NUMBER} - SUCCESS",
+                body: "The pipeline has completed successfully.",
+                to: 'flxschmidt969@gmail.com',
+                from: 'jenkins@example.com',
+                replyTo: 'jenkins@example.com',
+                mimeType: 'text/html'
+            )
+        }
+        failure {
+            emailext (
+                subject: "${JOB_NAME} - Build #${BUILD_NUMBER} - FAILURE",
+                body: "The pipeline has failed.",
+                to: 'flxschmidt969@gmail.com',
+                from: 'jenkins@example.com',
+                replyTo: 'jenkins@example.com',
+                mimeType: 'text/html'
             )
         }
     }
+
+
 }
 
     
