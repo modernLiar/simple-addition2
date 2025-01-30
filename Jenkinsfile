@@ -115,8 +115,8 @@ pipeline {
                     subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus}",
                     body: body,
                     to: 'flxschmidt969@gmail.com',
-                    from: 'jenkins@example.com',
-                    replyTo: 'jenkins@example.com',
+                    from: 'tahakeremtasci@gmail.com',
+                    replyTo: 'tahakeremtasci@gmail.com',
                     mimeType: 'text/html',
                     // attachmentsPattern: 'a.txt' # Uncomment this line if you have a file you want to attach
                 )
