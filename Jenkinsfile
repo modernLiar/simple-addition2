@@ -5,6 +5,20 @@ pipeline {
         DOCKER_PASSWORD = credentials('docker-password')
     }
     stages {
+        stage('Test Email') {
+            steps {
+                script {
+                    emailext (
+                        subject: "Test Email from Jenkins",
+                        body: "If you receive this, Jenkins email works!",
+                        to: 'flxschmidt969@gmail.com',
+                        from: 'jenkins@example.com',
+                        replyTo: 'jenkins@example.com',
+                        mimeType: 'text/html'
+                    )
+                }
+            }
+        }
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/modernLiar/simple-addition2.git'
