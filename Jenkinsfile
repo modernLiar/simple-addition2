@@ -107,7 +107,7 @@ pipeline {
                 body: "The pipeline has failed.",
                 to: 'flxschmidt969@gmail.com',
                 from: 'tahakeremtasci@gmail.com',
-                replyTo: 'tahakeremtasci@gmail.com'
+                replyTo: 'tahakeremtasci@gmail.com',
                 mimeType: 'text/html'
             )
         }
