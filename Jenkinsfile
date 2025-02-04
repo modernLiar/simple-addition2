@@ -20,7 +20,6 @@ pipeline {
                 sh '''
                 echo "Logging in to Docker Hub..."
                 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                echo "I am the best"
                 '''
             }
         }
