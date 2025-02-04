@@ -41,6 +41,7 @@ pipeline {
                         docker tag addition-app $DOCKER_USERNAME/addition-app:${imageTag}
 
                         echo "Pushing the Docker image to Docker Hub..."
+                        echo "I AM AWESOME!"
                         docker push $DOCKER_USERNAME/addition-app:latest
                         docker push $DOCKER_USERNAME/addition-app:${imageTag}
                     """
