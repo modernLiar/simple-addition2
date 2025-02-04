@@ -30,12 +30,21 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                sh '''
-                echo "Tagging the Docker image..."
-                docker tag addition-app $DOCKER_USERNAME/addition-app:latest
-                echo "Pushing the Docker image to Docker Hub..."
-                docker push $DOCKER_USERNAME/addition-app:latest
-                '''
+                script {
+                    def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    def buildNumber = env.BUILD_NUMBER
+                    def imageTag = "${buildNumber}-${commitHash}"
+
+                    echo "Tagging the Docker image..."
+                    sh """
+                        docker tag addition-app $DOCKER_USERNAME/addition-app:latest
+                        docker tag addition-app $DOCKER_USERNAME/addition-app:${imageTag}
+
+                        echo "Pushing the Docker image to Docker Hub..."
+                        docker push $DOCKER_USERNAME/addition-app:latest
+                        docker push $DOCKER_USERNAME/addition-app:${imageTag}
+                    """
+                }
             }
         }
     }
