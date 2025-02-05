@@ -17,10 +17,10 @@ pipeline {
         }
         stage('Login to Docker Hub') {
             steps {
-                sh '''
+                sh """
                 echo "Logging in to Docker Hub..."
                 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                '''
+                """
             }
         }
         stage('Build Docker Image') {
@@ -42,14 +42,34 @@ pipeline {
                         docker tag addition-app $DOCKER_USERNAME/addition-app:${imageTag}
 
                         echo "Pushing the Docker image to Docker Hub..."
-                        echo "I AM AWESOME! "
                         docker push $DOCKER_USERNAME/addition-app:latest
                         docker push $DOCKER_USERNAME/addition-app:${imageTag}
                     """
                 }
             }
         }
+
+        stage('Create Container in the Host Machine'){
+            environment{
+                DOCKER_HOST = 'tcp://192.168.1.13:2375'
+            }
+            steps{
+                script{
+                    def CONTAINER_ID = env.BUILD_NUMBER
+
+                    sh """
+                    Pulling the latest image for building container...
+                    docker pull $DOCKER_USERNAME/addition-app:latest
+                    Building the container with the latest image
+                    docker run -d --name addition-container-${CONTAINER_ID} $DOCKER_USERNAME/addition-app:latest
+                    """    
+                }
+                
+            }
+        }
     }
+
+
     post {
         always {
             script {
