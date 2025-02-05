@@ -58,9 +58,9 @@ pipeline {
                     def CONTAINER_ID = env.BUILD_NUMBER
 
                     sh """
-                    Pulling the latest image for building container...
+                    echo 'Pulling the latest image for building container...'
                     docker pull $DOCKER_USERNAME/addition-app:latest
-                    Building the container with the latest image
+                    echo 'Building the container with the latest image'
                     docker run -d --name addition-container-${CONTAINER_ID} $DOCKER_USERNAME/addition-app:latest
                     """    
                 }
