@@ -50,9 +50,6 @@ pipeline {
         }
 
         stage('Create Container in the Host Machine'){
-            environment{
-                DOCKER_HOST = 'tcp://192.168.1.13:2375'
-            }
             steps{
                 script{
                     def CONTAINER_ID = env.BUILD_NUMBER
